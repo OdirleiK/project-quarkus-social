@@ -2,6 +2,7 @@ package br.com.kmpx.quarkussocial.domain.model;
 
 import java.util.Objects;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
-public class User {
+public class User extends PanacheEntityBase{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
