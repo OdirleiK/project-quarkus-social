@@ -1,16 +1,15 @@
 package br.com.kmpx.quarkussocial.domain.model;
 
-import java.util.Objects;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name="users")
+@Data
 public class User {
 
 	@Id
@@ -19,37 +18,5 @@ public class User {
 	private String name;
 	private Integer age;
 	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Integer getAge() {
-		return age;
-	}
-	public void setAge(Integer age) {
-		this.age = age;
-	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(age, id, name);
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		return Objects.equals(age, other.age) && Objects.equals(id, other.id) && Objects.equals(name, other.name);
-	}
+
 }
