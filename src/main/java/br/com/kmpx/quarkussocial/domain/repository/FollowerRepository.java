@@ -1,7 +1,6 @@
 package br.com.kmpx.quarkussocial.domain.repository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 import br.com.kmpx.quarkussocial.domain.model.Follower;
@@ -22,5 +21,10 @@ public class FollowerRepository implements PanacheRepository<Follower>{
 		Optional<Follower> firstResultOptional = query.firstResultOptional();
 		
 		return firstResultOptional.isPresent();
+	}
+	
+	public List<Follower> findByUser(Long userId) {
+		PanacheQuery<Follower> query = find("user.id", userId);
+		return query.list();
 	}
 }
