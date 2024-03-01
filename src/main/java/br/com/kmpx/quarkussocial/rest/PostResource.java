@@ -1,10 +1,17 @@
 package br.com.kmpx.quarkussocial.rest;
 
+import java.util.List;import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import br.com.kmpx.quarkussocial.domain.model.Post;
 import br.com.kmpx.quarkussocial.domain.model.User;
 import br.com.kmpx.quarkussocial.domain.repository.PostRepository;
 import br.com.kmpx.quarkussocial.domain.repository.UserRepository;
 import br.com.kmpx.quarkussocial.rest.dto.CreatePostRequest;
+import br.com.kmpx.quarkussocial.rest.dto.PostResponse;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Sort;
+import io.quarkus.panache.common.Sort.Direction;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -52,6 +59,11 @@ public class PostResource {
 		if(user == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		
-		return Response.ok().build();
+		PanacheQuery<Post> query = repository.find("user", Sort.by("dateTime", Direction.Descending), user);
+		List<Post> list = query.list();
+		
+		List<PostResponse> response = list.stream().map(post -> PostResponse.fromEntity(post)).collect(Collectors.toList());
+		
+		return Response.ok(response).build();
 	}
 }
