@@ -6,6 +6,7 @@ import br.com.kmpx.quarkussocial.domain.repository.FollowerRepository;
 import br.com.kmpx.quarkussocial.domain.repository.UserRepository;
 import br.com.kmpx.quarkussocial.rest.dto.FollowerRequest;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -31,6 +32,7 @@ public class FollowerResource {
 	}
 	
 	@PUT
+	@Transactional
 	public Response followUser(@PathParam("userId") Long userId, FollowerRequest request) {
 		User user = userRepository.findById(userId);
 		
@@ -39,11 +41,16 @@ public class FollowerResource {
 		
 		User follower = userRepository.findById(request.getFollowerId());
 		
-		Follower entity = new Follower();
-		entity.setUser(user);
-		entity.setFollower(follower);
+		boolean follows = repository.follows(follower, user);
 		
-		repository.persist(entity);
+		if(!follows) {
+			Follower entity = new Follower();
+			entity.setUser(user);
+			entity.setFollower(follower);
+			
+			repository.persist(entity);		
+		}
+		
 		
 		return Response.status(Response.Status.NO_CONTENT).build();
 		
