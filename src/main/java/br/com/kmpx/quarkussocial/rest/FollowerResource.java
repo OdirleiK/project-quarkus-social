@@ -13,11 +13,13 @@ import br.com.kmpx.quarkussocial.rest.dto.FollowersPerUserResponse;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -81,6 +83,21 @@ public class FollowerResource {
 		response.setContent(followerList);
 		
 		return Response.ok(response).build();
+	}
+	
+	@DELETE
+	@Transactional
+	public Response unfollowUser(@PathParam("userId") Long userId, @QueryParam("followerId") Long followerId) {
+		
+		User user = userRepository.findById(userId);
+		
+		if(user == null) 
+			return Response.status(Response.Status.NOT_FOUND).build();
+		
+		repository.deleteByFollowerAndUser(followerId, userId);
+		
+		return Response.status(Response.Status.NO_CONTENT).build();
+
 	}
 
 }
