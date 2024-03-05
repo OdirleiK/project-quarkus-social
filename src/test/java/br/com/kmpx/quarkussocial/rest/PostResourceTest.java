@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import javax.inject.Inject;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,6 +82,33 @@ class PostResourceTest {
         .then()
             .statusCode(404);
     }
+	
+	@Test
+    @DisplayName("should return 400 when followerId header is not present")
+    public void listPostFollowerHeaderNotSendTest(){
+        given()
+            .pathParam("userId", userId)
+        .when()
+            .get()
+        .then()
+            .statusCode(400)
+            .body(Matchers.is("You forgot the header followerId"));
+    }
 
+	@Test
+    @DisplayName("should return 400 when follower doesn't exist")
+    public void listPostFollowerNotFoundTest(){
+
+        var inexistentFollowerId = 999;
+
+        given()
+            .pathParam("userId", userId)
+            .header("followerId", inexistentFollowerId)
+        .when()
+            .get()
+        .then()
+            .statusCode(400)
+            .body(Matchers.is("Inexistent followerId"));
+    }
 
 }
