@@ -1,6 +1,7 @@
 package br.com.kmpx.quarkussocial.rest;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.inject.Inject;
 
@@ -103,6 +104,67 @@ class FollowerResourceTest {
             .pathParam("userId", userId)
         .when()
             .put()
+        .then()
+            .statusCode(Response.Status.NO_CONTENT.getStatusCode());
+    }
+    
+    @Test
+    @DisplayName("should return 404 on list user followers and User id doen't exist")
+    public void userNotFoundWhenListingFollowersTest(){
+        var inexistentUserId = 999;
+
+        given()
+            .contentType(ContentType.JSON)
+            .pathParam("userId", inexistentUserId)
+        .when()
+            .get()
+        .then()
+            .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("should list a user's followers")
+    public void listFollowersTest(){
+        var response =
+                given()
+                    .contentType(ContentType.JSON)
+                    .pathParam("userId", userId)
+                .when()
+                    .get()
+                .then()
+                    .extract().response();
+
+        var followersCount = response.jsonPath().get("followersCount");
+        var followersContent = response.jsonPath().getList("content");
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.statusCode());
+        assertEquals(1, followersCount);
+        assertEquals(1, followersContent.size());
+
+    }
+
+    @Test
+    @DisplayName("should return 404 on unfollow user and User id doen't exist")
+    public void userNotFoundWhenUnfollowingAUserTest(){
+        var inexistentUserId = 999;
+
+        given()
+            .pathParam("userId", inexistentUserId)
+            .queryParam("followerId", followerId)
+        .when()
+            .delete()
+        .then()
+            .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("should Unfollow an user")
+    public void unfollowUserTest(){
+        given()
+            .pathParam("userId", userId)
+            .queryParam("followerId", followerId)
+        .when()
+            .delete()
         .then()
             .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
