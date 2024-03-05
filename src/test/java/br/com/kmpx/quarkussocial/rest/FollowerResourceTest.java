@@ -70,5 +70,24 @@ class FollowerResourceTest {
             .statusCode(Response.Status.CONFLICT.getStatusCode())
             .body(Matchers.is("You can't follow yourself"));
     }
+    
+    @Test
+    @DisplayName("should return 404 on follow a user when User id doen't exist")
+    public void userNotFoundWhenTryingToFollowTest(){
+
+        var body = new FollowerRequest();
+        body.setFollowerId(userId);
+
+        var inexistentUserId = 999;
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(body)
+            .pathParam("userId", inexistentUserId)
+        .when()
+            .put()
+        .then()
+            .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+    }
 
 }
